@@ -286,6 +286,89 @@ try {
 
 
 /* ============================================================
+   13. LES API (APPELS RÉSEAU AVEC fetch)
+   ============================================================
+   Une API (Application Programming Interface) permet à ton code
+   de communiquer avec un serveur distant pour récupérer ou
+   envoyer des données (météo, utilisateurs, produits...).
+
+   En JavaScript moderne (navigateur ou Node.js récent), on utilise
+   la fonction native fetch(), qui renvoie une Promise.
+*/
+
+console.log("\n--- 13. Les API ---");
+
+// Exemple de requête GET : récupérer des données depuis une API
+async function recupererUtilisateur() {
+  try {
+    const reponse = await fetch("https://jsonplaceholder.typicode.com/users/1");
+
+    // reponse.ok indique si le code HTTP est entre 200 et 299
+    if (!reponse.ok) {
+      throw new Error(`Erreur HTTP : ${reponse.status}`);
+    }
+
+    const donnees = await reponse.json(); // on convertit la réponse en objet JS
+    console.log("Utilisateur reçu :", donnees.name, "-", donnees.email);
+    return donnees;
+  } catch (erreur) {
+    console.log("Échec de la requête :", erreur.message);
+  }
+}
+
+// Exemple de requête POST : envoyer des données à une API
+async function creerArticle() {
+  try {
+    const reponse = await fetch("https://jsonplaceholder.typicode.com/posts", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json", // on précise qu'on envoie du JSON
+      },
+      body: JSON.stringify({
+        title: "Mon article",
+        body: "Contenu de l'article",
+        userId: 1,
+      }),
+    });
+
+    const donnees = await reponse.json();
+    console.log("Article créé avec l'id :", donnees.id);
+  } catch (erreur) {
+    console.log("Échec de l'envoi :", erreur.message);
+  }
+}
+
+// Ces appels sont asynchrones : ils ne bloquent pas le reste du script.
+recupererUtilisateur();
+creerArticle();
+
+/* ------------------------------------------------------------
+   Points clés sur les API en JavaScript :
+
+   - fetch(url) envoie une requête GET par défaut.
+   - On peut changer la méthode (POST, PUT, DELETE...) via l'objet
+     d'options : { method: "POST", headers: {...}, body: "..." }.
+   - La réponse (response) n'est pas directement les données : il
+     faut appeler .json() (ou .text()) pour les extraire, et cet
+     appel est lui-même asynchrone (il renvoie une Promise).
+   - fetch() ne rejette PAS automatiquement en cas d'erreur HTTP
+     (comme un 404 ou 500) : il faut vérifier reponse.ok soi-même.
+   - Beaucoup d'API demandent une authentification, souvent via un
+     header : headers: { "Authorization": "Bearer MON_TOKEN" }.
+   - Les API REST utilisent typiquement les verbes HTTP suivants :
+       GET    -> lire des données
+       POST   -> créer une ressource
+       PUT    -> remplacer une ressource existante
+       PATCH  -> modifier partiellement une ressource
+       DELETE -> supprimer une ressource
+   - Dans un navigateur, les appels vers un domaine différent
+     peuvent être bloqués par la politique CORS (Cross-Origin
+     Resource Sharing) : c'est une sécurité gérée par le serveur
+     distant, pas une erreur dans ton code.
+   ------------------------------------------------------------ */
+
+
+/* ============================================================
    RÉCAPITULATIF DES ÉTAPES POUR PROGRESSER
    ============================================================
    1. Variables, types, opérateurs
@@ -296,8 +379,9 @@ try {
    6. Classes et POO
    7. Gestion des erreurs (try/catch)
    8. Modules pour structurer un vrai projet
-   9. Ensuite : le DOM (manipuler une page web), fetch() pour
-      les requêtes HTTP, puis un framework (React, Vue...) si besoin.
+   9. Les API : appeler un serveur distant avec fetch() (GET, POST...)
+   10. Ensuite : le DOM (manipuler une page web), puis un framework
+       (React, Vue...) si besoin.
    ============================================================ */
 
 console.log("\n--- Fin du guide ---");
